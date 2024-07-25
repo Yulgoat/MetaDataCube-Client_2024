@@ -3,7 +3,6 @@ import { BrowserModule } from '@angular/platform-browser';
 import { AppComponent } from './app.component';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
-import { NgxSliderModule } from '@angular-slider/ngx-slider';
 import { GetTagsetListService } from './services/get-tagset-list.service';
 import { SelectionComponent } from './components/browsing-state/selection/selection.component';
 import { SelectionNodeComponent } from './components/browsing-state/selection/selection-node/selection-node.component';
@@ -16,7 +15,6 @@ import { CellStateSingleComponent } from './components/cell-state/cell-state-sin
 import { PreSelectionPopupComponent } from './components/browsing-state/pre-selection-popup/pre-selection-popup.component';
 import { SelectionTagComponent } from './components/browsing-state/selection/selection-tag/selection-tag.component';
 import { CheckedElementsComponent } from './components/browsing-state/checked-elements/checked-elements.component';
-import { SelectionTagByRangeComponent } from './components/browsing-state/selection/selection-tag-by-range/selection-tag-by-range.component';
 
 
 @NgModule({
@@ -31,15 +29,13 @@ import { SelectionTagByRangeComponent } from './components/browsing-state/select
     CellStateSingleComponent,
     PreSelectionPopupComponent,
     SelectionTagComponent,
-    CheckedElementsComponent,
-    SelectionTagByRangeComponent,    
+    CheckedElementsComponent,    
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     HttpClientModule,
     FormsModule,
-    NgxSliderModule,
   ],
   providers: [
     GetTagsetListService

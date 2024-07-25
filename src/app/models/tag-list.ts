@@ -8,8 +8,6 @@ export class TagList {
     isVisible : boolean; 
     isExpanded : boolean;
 
-    asRange : boolean;
-
 
     constructor(tags:Tag[], tagsetID : number) {
         this.tags = tags;
@@ -18,7 +16,5 @@ export class TagList {
         
         this.isVisible = true;
         this.isExpanded = false;
-
-        this.asRange = true;
     }
 }

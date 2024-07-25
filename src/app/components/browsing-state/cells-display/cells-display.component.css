@@ -10,7 +10,7 @@
   }
 
 
-  /* ## Styles to show scrollbars (In this component) ## */
+  /* ## Styles for hiding scrollbars (In this component) ## */
     /* Specific styles for Chrome, Safari and other WebKit-based browsers */
     .axis-container::-webkit-scrollbar {
       width: 0.5em;

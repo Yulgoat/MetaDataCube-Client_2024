@@ -23,10 +23,6 @@
     margin : 0.8em 0 1.4em 0;
 }
 
-.checked_all_element_tagsetTitle{
-    margin-top: 1em;
-}
-
 .checked_element{
     display: flex;
     align-items: center;

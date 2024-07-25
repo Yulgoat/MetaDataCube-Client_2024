@@ -2,7 +2,7 @@
 
     <!-- Header Tag (small and large screen) -->
     <header>
-      <div class="header_title">MediaCube</div>
+      <div class="header_title">MetaDataCube</div>
       <div class="header_undoredo_div">
         <img class="header_undoredo_img" src="../assets/icons/undo.svg" (click)="undo()">
         <img class="header_undoredo_img" src="../assets/icons/redo.svg" (click)="redo()">
@@ -19,7 +19,7 @@
     <article *ngIf="smallscreen===false; else smallscreenVersion" class="article">
       <section class="select_dimensions" [style.max-width]="display_dimensions ? '22%' : '1%'" [style.min-width]="display_dimensions ? '22%' : '1%'">
         <div class="select_dimensions_pannel" [style.display]="display_dimensions ? 'flex' : 'none'">
-          <app-dimensions-selection></app-dimensions-selection>
+          <app-selection></app-selection>
         </div>
         <div class="select_dimensions_button" [style.max-width]="display_dimensions ? '4%' : '100%'" [style.min-width]="display_dimensions ? '4%' : '100%'" >
           <button (click)="display_dimensions_change()"> {{ display_dimensions ? '-' : '+' }} </button>
@@ -34,8 +34,8 @@
         <div class="select_filters_button"  [style.max-width]="display_filters ? '4%' : '100%'" [style.min-width]="display_filters ? '4%' : '100%'">
           <button (click)="display_filters_change()"> {{ display_filters ? '-' : '+' }} </button>
         </div>
-        <div class="select_filters_pannel" [style.display]="display_filters ? 'flex' : 'none'">      
-          <app-filters-selection></app-filters-selection>
+        <div class="select_filters_pannel" [style.display]="display_filters ? 'flex' : 'none'">    
+          <app-checked-elements></app-checked-elements>
         </div>
       </section>
 
@@ -50,7 +50,7 @@
             <button (click)="display_dimensions_change()" [style.border-radius]="display_dimensions ? '50px 50px 0 0' : '50px 50px 50px 50px'"> {{ display_dimensions ? '-' : '+' }} </button>
           </div>
           <div class="smcr_select_dimensions_pannel" [style.display]="display_dimensions ? 'flex' : 'none'">
-            <app-dimensions-selection></app-dimensions-selection>
+            <app-selection></app-selection>
           </div>
         </section>
         
@@ -63,7 +63,7 @@
             <button (click)="display_filters_change()"  [style.border-radius]="display_filters ? '50px 50px 0 0' : '50px 50px 50px 50px'"> {{ display_filters ? '-' : '+' }} </button>
           </div>
           <div class="smcr_select_filters_pannel" [style.display]="display_filters ? 'flex' : 'none'">
-            <app-filters-selection></app-filters-selection>
+            <app-checked-elements></app-checked-elements>
           </div>
         </section>
 

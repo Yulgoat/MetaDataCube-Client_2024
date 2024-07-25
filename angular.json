@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "MediaCube-Client": {
+    "MetaDataCube-Client": {
       "projectType": "application",
       "schematics": {
         "@schematics/angular:component": {
@@ -23,7 +23,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:application",
           "options": {
-            "outputPath": "dist/photo-cube-client",
+            "outputPath": "dist/meta-data-cube-client",
             "index": "src/index.html",
             "browser": "src/main.ts",
             "polyfills": [
@@ -75,10 +75,10 @@
           },
           "configurations": {
             "production": {
-              "buildTarget": "MediaCube-Client:build:production"
+              "buildTarget": "MetaDataCube-Client:build:production"
             },
             "development": {
-              "buildTarget": "MediaCube-Client:build:development"
+              "buildTarget": "MetaDataCube-Client:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -86,7 +86,7 @@
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "buildTarget": "MediaCube-Client:build"
+            "buildTarget": "MetaDataCube-Client:build"
           }
         },
         "test": {

@@ -7,13 +7,11 @@ export class Node {
     children: Node[] | null;
     tagId : number;
 
-    isExpandedDimensions : boolean;
-    isExpandedFilters : boolean;
+    isExpanded : boolean;
     isCheckedX : boolean; 
     isCheckedY : boolean; 
-    isCheckedFilters:boolean;
-    isVisibleDimensions : boolean;
-    isVisibleFilters : boolean;
+    isCheckedFilters : boolean;
+    isVisible : boolean;
 
     constructor(name: string, id: number, parents: number | null = null, children: Node[] | null = null, tagID:number, tagsetID : number) {
         this.name = name;
@@ -23,13 +21,11 @@ export class Node {
         this.children = children;
         this.tagId = tagID;
 
-        this.isExpandedDimensions = false;
-        this.isExpandedFilters = false;
+        this.isExpanded = false;
         this.isCheckedX = false;
         this.isCheckedY = false;
         this.isCheckedFilters = false;
-        this.isVisibleDimensions = true;
-        this.isVisibleFilters = true;
+        this.isVisible = true;
         
         this.type = 'node';
     }

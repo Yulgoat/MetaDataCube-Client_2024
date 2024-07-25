@@ -1,0 +1,6 @@
+<div class="selection_tag_element" *ngIf="tag.isVisible">
+    <input type="checkbox" [disabled]="true"/>
+    <input type="checkbox" [disabled]="true"/>
+    <input type="checkbox" [checked]="tag.ischecked" (change)="tagFilterSelected(tag)" [style.margin-right]="'50px'" />
+    {{tag.name}}
+</div>

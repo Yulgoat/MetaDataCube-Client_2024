@@ -1,5 +1,5 @@
 {
-  "name": "photo-cube-client",
+  "name": "meta-data-cube-client",
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
@@ -7,7 +7,7 @@
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "serve:ssr:MediaCube-Client": "node dist/media-cube-client/server/server.mjs"
+    "serve:ssr:MetaDataCube-Client": "node dist/meta-data-cube-client/server/server.mjs"
   },
   "private": true,
   "dependencies": {

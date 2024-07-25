@@ -7,6 +7,7 @@ import { ActualSearchFile } from '../models/actual-search-file';
 import { Tagset } from '../models/tagset';
 import { Hierarchy } from '../models/hierarchy';
 import { FindElement } from './find-element.service';
+import { TagList } from '../models/tag-list';
 
 @Injectable({
   providedIn: 'root'
@@ -24,7 +25,7 @@ export class UndoRedoService {
 
   /** List of List of Hierarchy and/or Tagset. When we modify the preselection, we add the modified items to a list, 
    * which is then stored here to keep a history of the modified items. A PreSelection is a Tagset|Hierarchy List */
-  AllPreSelectionDo : ((Tagset|Hierarchy)[])[] = [[]]
+  AllPreSelectionDo : ((Tagset|Hierarchy|TagList)[])[] = [[]]
 
   positionDo : number = 0;
   positionAllSelectedDimensionsDid : number = 0;
@@ -131,10 +132,10 @@ export class UndoRedoService {
   }
 
   /**
-   * To undo a PreSelection, we will invert the isVisble/isVisibleDimensions values of the elements 
+   * To undo a PreSelection, we will invert the isVisble values of the elements 
    * in the current preselection from the AllPreSelectionDo preSelection list.
    * 
-   * Just as to change whether a dimension is pre-selected or not, we invert its isVisible/isVisibleDimensions value, to undo/redo 
+   * Just as to change whether a dimension is pre-selected or not, we invert its isVisible value, to undo/redo 
    * the action we just need to invert the value again.
    */
   undoPreSelection(){
@@ -144,13 +145,7 @@ export class UndoRedoService {
     // We go through the list, and invert the isVisible/isVisibleDimensions value of the element.
     if(Array.isArray(element)){
       element.forEach(elt=>{
-        if(elt.type==="hierarchy"){
-          elt.isVisible = !elt.isVisible;
-        }
-  
-        else{
-          elt.isVisibleDimensions = !elt.isVisibleDimensions;
-        }
+        elt.isVisible = !elt.isVisible;
       })
     }
 
@@ -212,11 +207,11 @@ export class UndoRedoService {
 
     if(newSelectedDimensions.elementX?.type==="node" || newSelectedDimensions.elementX?.type==="tagset"){
       newSelectedDimensions.elementX.isCheckedX = true;
-      if(newSelectedDimensions.elementX.type==='node'){this.findElement.expandDimNodeParents(newSelectedDimensions.elementX.parentID)}
+      if(newSelectedDimensions.elementX.type==='node'){this.findElement.expandNodeParents(newSelectedDimensions.elementX.parentID)}
     }
     if(newSelectedDimensions.elementY?.type==="node" || newSelectedDimensions.elementY?.type==="tagset"){
       newSelectedDimensions.elementY.isCheckedY = true;
-      if(newSelectedDimensions.elementY.type==='node'){this.findElement.expandDimNodeParents(newSelectedDimensions.elementY.parentID)}
+      if(newSelectedDimensions.elementY.type==='node'){this.findElement.expandNodeParents(newSelectedDimensions.elementY.parentID)}
     }
 
 
@@ -244,12 +239,14 @@ export class UndoRedoService {
     newListFilters.forEach(filter=>{
       if(filter.element.type==="tag"){
         filter.element.ischecked = true;
+        this.findElement.expandParentTagset(filter.element);
+        this.findElement.expandParentTagList(filter.element);
       }
       else{
         filter.element.isCheckedFilters = true;
         if(filter.element.type==='node'){
-          this.findElement.expandFilterNodeParents(filter.element.parentID);
-          this.findElement.expandFitlerTagset(filter.element);
+          this.findElement.expandNodeParents(filter.element.parentID);
+          this.findElement.expandParentTagset(filter.element);
         }
       }
     })
@@ -259,7 +256,7 @@ export class UndoRedoService {
 
   /**
    * To redo a PreSelection, we'll retrieve the next PreSelection(tagsetList) from the AllPreSelectionDo preSelection(tagsetList) list.
-   * We'll then invert the isVisible/isVisibleDimensions values of the elements present in the new PreSelection so that this PreSelection is the current one.
+   * We'll then invert the isVisible values of the elements present in the new PreSelection so that this PreSelection is the current one.
    */
   redoPreSelection(){
     this.positionAllPreSelectionDo = this.positionAllPreSelectionDo + 1;
@@ -268,12 +265,7 @@ export class UndoRedoService {
 
     if(Array.isArray(element)){
       element.forEach(elt=>{
-        if(elt.type==="hierarchy"){
-          elt.isVisible = !elt.isVisible;
-        }  
-        else{
-          elt.isVisibleDimensions = !elt.isVisibleDimensions;
-        }
+        elt.isVisible = !elt.isVisible;
       })
     }
   }
@@ -374,7 +366,7 @@ export class UndoRedoService {
    * 
    * We'll add the "File" action to Do and increment all the positions with 1.
    */
-  addFileAction(actualSearchFile:ActualSearchFile,modified_elements:(Hierarchy|Tagset)[],jsonFiltersList:Filter[]){
+  addFileAction(actualSearchFile:ActualSearchFile,modified_elements:(Hierarchy|Tagset|TagList)[],jsonFiltersList:Filter[]){
     let newDoList : ("Dim"|"Filter"|"File"|"PreSelection"|"Start")[] = [];
     for (let i = 0; i <= this.positionDo; i++) {
       newDoList.push(this.Do[i]);
@@ -396,7 +388,7 @@ export class UndoRedoService {
       newAllFiltersAdd.push(newfiltersList);
     }
 
-    let newAllPreSelectionDo : ((Hierarchy|Tagset)[])[] = [];
+    let newAllPreSelectionDo : ((Hierarchy|Tagset|TagList)[])[] = [];
     for (let i = 0; i <= this.positionAllPreSelectionDo; i++) {
       newAllPreSelectionDo.push(this.AllPreSelectionDo[i]);
     }
@@ -433,7 +425,7 @@ export class UndoRedoService {
    * 
    * We'll add the "PreSelection" action to Do and increment the positions.
    */
-  addPreSelectionAction(modified_elements:(Hierarchy|Tagset)[]){ 
+  addPreSelectionAction(modified_elements:(Hierarchy|Tagset|TagList)[]){ 
     //Delete the DoList Element after the actual position if they exist
     let newDoList : ("Dim"|"Filter"|"File"|"PreSelection"|"Start")[] = [];
     for (let i = 0; i <= this.positionDo; i++) {
@@ -442,7 +434,7 @@ export class UndoRedoService {
     this.Do = newDoList;
 
     //Delete the PreSelection(tagsetList) after the actual position if they exist
-    let newAllPreSelectionDo : ((Hierarchy|Tagset)[])[] = [];
+    let newAllPreSelectionDo : ((Hierarchy|Tagset|TagList)[])[] = [];
     for (let i = 0; i <= this.positionAllPreSelectionDo; i++) {
       newAllPreSelectionDo.push(this.AllPreSelectionDo[i]);
     }

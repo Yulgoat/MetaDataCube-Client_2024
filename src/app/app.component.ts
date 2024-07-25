@@ -6,5 +6,5 @@ import { Component, Inject, OnInit, PLATFORM_ID, HostListener } from '@angular/c
 })
 
 export class AppComponent{
-  title = 'MediaCube';
+  title = 'MetaDataCube';
 }

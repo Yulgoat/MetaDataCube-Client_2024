@@ -1,0 +1,56 @@
+<p class="selection_component_title">
+    Selection
+</p>
+
+<div class="selection_component_searchbar"> 
+    <input type="text" [(ngModel)]="elementToSearch" placeholder="Search..." (input)="search_Elements()" > 
+</div>
+
+<button class="clear_selection_component" (click)="clearSelection()"> Clear Selection </button>
+
+<div class="selection_component_labels">
+
+    <div class="column_title">
+      <div>X</div><div>Y</div><div>F</div>
+    </div>
+
+    <div class="selection_tagset_labels" *ngFor="let tagset of tagsetlist" >
+      <div *ngIf="tagset.isVisible">
+        <div class="selection_labels_title">
+          <input type="checkbox" [checked]="tagset.isCheckedX" (change)="dimXSelected(tagset)" />
+          <input type="checkbox" [checked]="tagset.isCheckedY" (change)="dimYSelected(tagset)"/>
+          <input type="checkbox" [checked]="tagset.isCheckedFilters" (change)="tagsetFilterSelected(tagset)" [style.margin-right]="'50px'"/>
+          {{tagset.name}}
+        </div>
+
+        <!-- Display tags not present in tagset hierarchy nodes -->
+        <div class="selection_tags_labels_div"  *ngIf="tagset.tagList.isVisible">
+          <div class="selection_labels_title">
+            <span class="toggle-button" (click)="tagset.tagList.isExpanded= !tagset.tagList.isExpanded">{{tagset.tagList.isExpanded ? '-' : '+'}}</span>  
+            Tags
+          </div>
+          <div class="selection_tags_labels" *ngIf="tagset.tagList.isExpanded">
+              <app-selection-tag *ngFor="let tag of sortTags(getTagsetTagList(tagset))" [tag]="tag"></app-selection-tag>
+          </div>  
+        </div>
+
+        <div class="selection_hierarchy_labels" *ngFor="let hierarchy of sortHierarchy(tagset.hierarchies)" >
+          <div *ngIf="hierarchy.isVisible && hierarchy.firstNode.children && hierarchy.firstNode.children.length > 0">
+            <div class="selection_labels_title">
+              <input type="checkbox" [checked]="hierarchy.firstNode.isCheckedX" [disabled]="!(hierarchy.firstNode.children.length>0)" (change)="dimXSelected(hierarchy.firstNode)"/>
+              <input type="checkbox" [checked]="hierarchy.firstNode.isCheckedY" [disabled]="!(hierarchy.firstNode.children.length>0)" (change)="dimYSelected(hierarchy.firstNode)" />
+              <input type="checkbox" [checked]="hierarchy.firstNode.isCheckedFilters" (change)="nodeFilterSelected(hierarchy.firstNode)" [style.margin-right]="'50px'"/>
+                         
+              <!-- A button (+ or -) will be displayed depending on whether the element is expanded or not -->
+              <span *ngIf="hierarchy.firstNode.children && hierarchy.firstNode.children.length > 0" class="toggle-button" (click)="hierarchy.firstNode.isExpanded = !hierarchy.firstNode.isExpanded">{{hierarchy.firstNode.isExpanded ? '-' : '+'}}</span> 
+              {{hierarchy.firstNode.name}}
+            </div>
+            <ng-container class="selection_childnodes_labels" *ngIf="hierarchy.firstNode.isExpanded">
+                <app-selection-node *ngFor="let childNode of sortNodeChildren(hierarchy.firstNode)" [node]="childNode"  [nodegen]="1"></app-selection-node>
+            </ng-container>        
+          </div> 
+        </div>
+      </div>    
+    </div>
+
+</div>

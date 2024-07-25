@@ -1,0 +1,39 @@
+/* ################### Title ################## */
+.checkedElements_component_title{
+    color:var(--main-color);
+    font-size: 2.1em;
+    width:  100%;
+    text-align: center;
+    margin:0.4em 0 0 0;
+}
+/* ############################################## */
+
+/* #################### List #################### */
+.checkedElements_component_labels{
+    margin: 1em 0 1em 0.5em;
+    color:var(--main-color);
+    flex-grow: 1;
+    overflow: hidden;
+    overflow-x: auto;
+    overflow-y: auto;
+    white-space: nowrap;
+}
+
+.checked_all_element{
+    margin : 0.8em 0 1.4em 0;
+}
+
+.checked_element{
+    display: flex;
+    align-items: center;
+}
+
+.column_title{
+    display: flex;
+    flex-direction: row;
+    font-size: 20px;
+}
+.column_title div{
+    margin:0 0em 0 0.5em;
+}
+/* ############################################## */

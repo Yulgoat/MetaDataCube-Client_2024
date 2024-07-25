@@ -4,6 +4,7 @@ import { Node } from '../models/node';
 import { GetTagsetListService } from './get-tagset-list.service';
 import { Tag } from '../models/tag';
 import { Hierarchy } from '../models/hierarchy';
+import { TagList } from '../models/tag-list';
 
 @Injectable({
   providedIn: 'root'
@@ -25,8 +26,8 @@ export class FindElement {
    * 
    * Contains an internal function  "findNodeById" which searches for the node (if the component is a node) in depth.
    */
-  findElementinTagsetList(elementid: number, elementType: 'node' | 'tagset' | 'tag' | 'hierarchy'): Tagset | Node | Tag | Hierarchy| null {
-    let element: Tagset | Node | Tag | Hierarchy| null = null;
+  findElementinTagsetList(elementid: number, elementType: 'node' | 'tagset' | 'tag' | 'hierarchy' | 'tagList'): Tagset | Node | Tag | Hierarchy| TagList | null {
+    let element: Tagset | Node | Tag | Hierarchy| TagList |  null = null;
     
     for (const tagset of this.tagsetList) {
         if (elementType === 'tagset') {
@@ -50,7 +51,7 @@ export class FindElement {
             }
         }
         else if (elementType === 'tag') {
-            for (const tag of tagset.tags) {
+            for (const tag of tagset.tagList.tags) {
                 if (tag.id === elementid) {
                     element = tag;
                     break;
@@ -64,6 +65,12 @@ export class FindElement {
                     break;
                 }
             }
+        }
+        else if (elementType === 'tagList') {            
+          if (tagset.id ===  elementid) {
+            element = tagset.tagList;
+            break;
+          }
         }
     }
 
@@ -90,37 +97,36 @@ export class FindElement {
   /**
    * Function that extends all the parents of a node in Dimensions Case.
    */
-  expandDimNodeParents(parentid: number|null): void {
+  expandNodeParents(parentid: number|null): void {
     if(!(parentid===null)){
       const parent = this.findElementinTagsetList(parentid,'node');
       if(parent && parent.type==='node'){
-        parent.isExpandedDimensions = true;
-        this.expandDimNodeParents(parent.parentID);
+        parent.isExpanded = true;
+        this.expandNodeParents(parent.parentID);
       }
     }
   }
 
   /**
-   * Function that extends all the parents of a node in Filters Case.
+   * Function that extends the tagset of the element
    */
-  expandFilterNodeParents(parentid: number|null): void {
-    if(!(parentid===null)){
-      const parent = this.findElementinTagsetList(parentid,'node');
-      if(parent && parent.type==='node'){
-        parent.isExpandedFilters = true;
-        this.expandFilterNodeParents(parent.parentID);
+  expandParentTagset(elt : Tag|Node): void {
+    if(!(elt.tagsetID===null)){
+      const parentTagset = this.findElementinTagsetList(elt.tagsetID,'tagset');
+      if(parentTagset && parentTagset.type==='tagset'){
+        parentTagset.isExpanded=true;
       }
     }
-  } 
+  }
 
   /**
    * Function that extends the tagset of the element
    */
-  expandFitlerTagset(elt : Tag|Node): void {
+  expandParentTagList(elt : Tag): void {
     if(!(elt.tagsetID===null)){
       const parentTagset = this.findElementinTagsetList(elt.tagsetID,'tagset');
       if(parentTagset && parentTagset.type==='tagset'){
-        parentTagset.isExpandedFilters=true;
+        parentTagset.tagList.isExpanded=true;
       }
     }
   }

@@ -3,8 +3,12 @@
         <div class="pre-selection_popup_tagset_labels" *ngFor="let tagset of tagsetlist" >
               <div class="pre-selection_popup_labels_title">
                 {{tagset.name}}
-                <input type="checkbox" [checked]="tagset.isVisibleDimensions" (change)="check_tagset(tagset)"/>
+                <input type="checkbox" [checked]="tagset.isVisible" (change)="check_tagset(tagset)"/>
               </div>
+              <div class="pre-selection_popup_labels_subtitle">
+                Tags
+                <input type="checkbox" [checked]="tagset.tagList.isVisible" (change)="check_tagsList(tagset.tagList,tagset)"/>
+              </div>    
               <div *ngFor="let hierarchy of sortHierarchy(tagset.hierarchies)" >
                 <div class="pre-selection_popup_labels_subtitle">
                     {{hierarchy.firstNode.name}}

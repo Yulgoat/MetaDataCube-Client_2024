@@ -14,6 +14,7 @@ import { Tagset } from '../../models/tagset';
 import { Node } from '../../models/node';
 import { Hierarchy } from '../../models/hierarchy';
 import { Tag } from '../../models/tag';
+import { TagList } from '../../models/tag-list';
 
 @Component({
   selector: 'app-browsing-state',
@@ -149,13 +150,11 @@ export class BrowsingStateComponent {
               // We reduce and uncheck the elements previously selected.
               if(this.selectedDimensions.elementX && !(this.selectedDimensions.elementX?.type==="tag")){
                 this.selectedDimensions.elementX.isCheckedX=false;
-                this.selectedDimensions.elementX.isExpandedDimensions=false;
-                this.selectedDimensions.elementX.isExpandedFilters=false;
+                this.selectedDimensions.elementX.isExpanded=false;
               }
               if(this.selectedDimensions.elementY && !(this.selectedDimensions.elementY?.type==="tag")){
                 this.selectedDimensions.elementY.isCheckedY=false;
-                this.selectedDimensions.elementY.isExpandedDimensions=false;
-                this.selectedDimensions.elementY.isExpandedFilters=false;
+                this.selectedDimensions.elementY.isExpanded=false;
               }
               this.selectedFilters.forEach(filter=>{
                 if(filter.element.type==='tag'){
@@ -167,26 +166,22 @@ export class BrowsingStateComponent {
               })
 
               // Dim X - We retrieve the element corresponding to the one selected in the file.
-              let actualX : Tagset | Node | Tag | Hierarchy| null = this.findElementService.findElementinTagsetList(json.selectedDimensions.xid, json.selectedDimensions.xtype);
-              if(actualX && !(actualX.type==='tag' || actualX.type==='hierarchy')){
+              let actualX : Tagset | Node | Tag | Hierarchy| TagList | null = this.findElementService.findElementinTagsetList(json.selectedDimensions.xid, json.selectedDimensions.xtype);
+              if(actualX && !(actualX.type==='tag' || actualX.type==='hierarchy' || actualX.type==='tagList')){
                 actualX.isCheckedX = json.selectedDimensions.elementX.isCheckedX; 
                 if(actualX.type==="node"){
-                  this.findElementService.expandDimNodeParents(actualX.id);
+                  this.findElementService.expandNodeParents(actualX.parentID);
                 }
-                actualX.isExpandedDimensions = json.selectedDimensions.elementX.isExpandedDimensions;
-                actualX.isVisibleFilters = json.selectedDimensions.elementX.isExpandedFilters;
               }
               json.selectedDimensions.elementX = actualX;
 
               // Dim Y - We retrieve the element corresponding to the one selected in the file.
-              let actualY : Tagset | Node | Tag | Hierarchy|  null = this.findElementService.findElementinTagsetList(json.selectedDimensions.yid, json.selectedDimensions.ytype);
-              if(actualY && !(actualY.type==='tag' || actualY.type==='hierarchy')){
+              let actualY : Tagset | Node | Tag | Hierarchy| TagList | TagList | null = this.findElementService.findElementinTagsetList(json.selectedDimensions.yid, json.selectedDimensions.ytype);
+              if(actualY && !(actualY.type==='tag' || actualY.type==='hierarchy' || actualY.type==='tagList')){
                 actualY.isCheckedY = json.selectedDimensions.elementY.isCheckedY; 
                 if(actualY.type==="node"){
-                  this.findElementService.expandDimNodeParents(actualY.id);
+                  this.findElementService.expandNodeParents(actualY.parentID);
                 }
-                actualY.isExpandedDimensions = json.selectedDimensions.elementY.isExpandedDimensions;
-                actualY.isVisibleFilters = json.selectedDimensions.elementY.isVisibleFilters;
               }
               json.selectedDimensions.elementY = actualY;
 
@@ -194,29 +189,27 @@ export class BrowsingStateComponent {
               const newFiltersList : Filter[] = [];
               json.selectedFilters.forEach((filter:Filter) => {
                 let actualFilter = this.findElementService.findElementinTagsetList(filter.id, filter.type);
-                if(actualFilter && !(actualFilter.type==='hierarchy')){
+                if(actualFilter && !(actualFilter.type==='hierarchy') && !(actualFilter.type==='tagList')){
                   if(actualFilter.type==="tag"&&filter.element.type==="tag"){
                     actualFilter.ischecked=filter.element.ischecked;
-                    this.findElementService.expandFitlerTagset(actualFilter);
+                    this.findElementService.expandParentTagset(actualFilter);
                   }
                   else if (actualFilter.type==="tagset"&&filter.element.type==="tagset"){
                     actualFilter.isCheckedFilters=filter.element.isCheckedFilters;
-                    actualFilter.isExpandedDimensions=filter.element.isExpandedDimensions;
-                    actualFilter.isExpandedFilters=filter.element.isExpandedFilters;
+                    actualFilter.isExpanded=filter.element.isExpanded;
                   }
                   else if (actualFilter.type==="node"&&filter.element.type==="node"){
                     actualFilter.isCheckedFilters=filter.element.isCheckedFilters;
-                    actualFilter.isExpandedDimensions=filter.element.isExpandedDimensions;
-                    actualFilter.isExpandedFilters=filter.element.isExpandedFilters;
-                    this.findElementService.expandFitlerTagset(actualFilter);
-                    this.findElementService.expandFilterNodeParents(actualFilter.parentID);
+                    actualFilter.isExpanded=filter.element.isExpanded;
+                    this.findElementService.expandParentTagset(actualFilter);
+                    this.findElementService.expandNodeParents(actualFilter.parentID);
                   }
                   newFiltersList.push(new Filter(actualFilter.id,actualFilter.type,actualFilter))
                 }
               });
 
               // PreSelection - Everything is visible
-              let modified_elements : (Hierarchy|Tagset)[] = [];
+              let modified_elements : (Hierarchy|Tagset|TagList)[] = [];
               this.tagsetList.forEach(tagset=>{
                 tagset.hierarchies.forEach(hierarchy =>{
                   if(hierarchy.isVisible===false){
@@ -224,21 +217,27 @@ export class BrowsingStateComponent {
                     modified_elements.push(hierarchy);
                   }
                 })
-                if(tagset.isVisibleDimensions===false){
-                  tagset.isVisibleDimensions = true;
+                if(tagset.tagList.isVisible===false){
+                  tagset.tagList.isVisible = true;
+                  modified_elements.push(tagset.tagList);
+                }
+                if(tagset.isVisible===false){
+                  tagset.isVisible = true;
                   modified_elements.push(tagset);
                 }
               });
               
               // PreSelection - We change the elements in the same way as they have been changed in the conf file
-              json.preSelection.forEach((list:(Hierarchy|Tagset)[]) =>{
+              json.preSelection.forEach((list:(Hierarchy|Tagset|TagList)[]) =>{
                 list.forEach(elt =>{
-                  let element = this.findElementService.findElementinTagsetList(elt.id, elt.type);
-                  if(element && element.type ==="tagset" && elt.type==="tagset"){
-                    element.isVisibleDimensions = elt.isVisibleDimensions;
-                    modified_elements.push(element);
+                  let element;
+                  if(elt.type==='tagList'){
+                    element = this.findElementService.findElementinTagsetList(elt.tagsetID, elt.type);
                   }
-                  else if (element && element.type ==="hierarchy" && elt.type==="hierarchy") {
+                  else{
+                    element = this.findElementService.findElementinTagsetList(elt.id, elt.type);
+                  }
+                  if(element && ((element.type==='hierarchy') || (element.type === 'tagList') || (element.type === 'tagset'))){
                     element.isVisible = elt.isVisible;
                     modified_elements.push(element);
                   }
@@ -265,7 +264,7 @@ export class BrowsingStateComponent {
   saveSearch(){
     let actualDimensions : SelectedDimensions = this.selectedDimensions;
     let actualFilters : Filter[] = this.selectedFilters;
-    let actualPreSelection : ((Hierarchy|Tagset)[])[] = this.undoredoService.AllPreSelectionDo;
+    let actualPreSelection : ((Hierarchy|Tagset|TagList)[])[] = this.undoredoService.AllPreSelectionDo;
     let actualSearch : ActualSearchFile = new ActualSearchFile(actualDimensions,actualFilters,actualPreSelection);
 
     if (actualSearch) {

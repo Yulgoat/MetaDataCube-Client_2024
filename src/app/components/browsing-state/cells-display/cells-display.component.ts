@@ -190,7 +190,7 @@ export class CellsDisplayComponent {
             if(newElement?.children && newElement.children.length>0){
               actualX.isCheckedX = false;
               newElement.isCheckedX = true;
-              this.findElementService.expandDimNodeParents(newElement.parentID);
+              this.findElementService.expandNodeParents(newElement.parentID);
               const newSelectedDimensions : SelectedDimensions = new SelectedDimensions(name,newElement.id,newElement.type,newElement,this.selectedDimensions.yname,this.selectedDimensions.yid,this.selectedDimensions.ytype,this.selectedDimensions.elementY);
               newSelectedDimensions.ischeckedX = newElement.isCheckedX;
               newSelectedDimensions.ischeckedY = this.selectedDimensions.ischeckedY;
@@ -211,7 +211,7 @@ export class CellsDisplayComponent {
             if(newElement?.children && newElement.children.length>0){
               actualY.isCheckedY = false;
               newElement.isCheckedY = true;
-              this.findElementService.expandDimNodeParents(newElement.parentID);
+              this.findElementService.expandNodeParents(newElement.parentID);
               const newSelectedDimensions : SelectedDimensions = new SelectedDimensions(this.selectedDimensions.xname,this.selectedDimensions.xid,this.selectedDimensions.xtype,this.selectedDimensions.elementX,name,newElement.id,newElement.type,newElement);
               newSelectedDimensions.ischeckedX = this.selectedDimensions.ischeckedX;
               newSelectedDimensions.ischeckedY = newElement.isCheckedY;
@@ -246,7 +246,7 @@ export class CellsDisplayComponent {
    * Function to retrieve the tag in a tagset
    */
   getTag(tagset:Tagset, tagName:string): Tag|null {
-    for (const tag of tagset.tags) {
+    for (const tag of tagset.tagList.tags) {
       if(tag.name===tagName){
         return tag;
       }
@@ -293,13 +293,13 @@ export class CellsDisplayComponent {
 
         if ((xname && newElementX ) || (yname && newElementY)) {
             if (newElementX && newElementX.type==='node' && xname) {  
-              this.findElementService.expandDimNodeParents(newElementX.parentID);
+              this.findElementService.expandNodeParents(newElementX.parentID);
               selectedCellState.xid = (newElementX.children && newElementX.children.length >0) ? newElementX.id : newElementX.tagId;
               selectedCellState.xtype = (newElementX.children && newElementX.children.length >0) ? 'node' : 'tag';
             }
 
             if (newElementY && newElementY.type==='node' && yname) {
-              this.findElementService.expandDimNodeParents(newElementY.parentID);
+              this.findElementService.expandNodeParents(newElementY.parentID);
               selectedCellState.yid = (newElementY.children && newElementY.children.length >0) ? newElementY.id : newElementY.tagId;
               selectedCellState.ytype = (newElementY.children && newElementY.children.length >0) ? 'node' : 'tag';
             }

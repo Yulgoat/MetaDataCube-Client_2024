@@ -122,7 +122,7 @@ header {
 /* ############################################## */
 
 /* ############### Component sizes ############## */
-app-dimensions-selection{
+app-selection{
     display: flex;
     flex-direction: column;
     width: 100%;
@@ -130,13 +130,14 @@ app-dimensions-selection{
     height: 100%;
 }
 
-app-filters-selection{
+app-checked-elements{
     display: flex;
     flex-direction: column;
     width: 100%;
-    border-radius: 50px 0 0 50px;
+    border-radius: 0 50px 50px 0;
     height: 100%;
 }
+
 
 app-cells-display{
     display: flex;

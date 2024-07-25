@@ -1,0 +1,33 @@
+<p class="checkedElements_component_title">
+    Checked Elements
+</p>
+
+<div class="checkedElements_component_labels">
+
+    <div class="column_title">
+      <div>X</div><div>Y</div><div>F</div>
+    </div>
+
+    <!-- Checked items will be displayed at the top (double) to make them easier to find and uncheck. -->
+    <div class="checked_all_element" [style.border-bottom]="!(checked_elements.size===0) ? 'solid var(--main-color)' : 'none'">
+      <div class="checked_element" *ngFor="let element of checked_elements">
+        <ng-container *ngIf="element.type==='tagset'">
+          <input type="checkbox" [checked]="element.isCheckedX" (change)="dimXSelected(element)" />
+          <input type="checkbox" [checked]="element.isCheckedY" (change)="dimYSelected(element)" />
+          <input type="checkbox" [checked]="element.isCheckedFilters" (change)="tagsetFilterSelected(element)" [style.margin-right]="'50px'" />
+        </ng-container>
+        <ng-container *ngIf="element.type==='tag'">
+          <input type="checkbox" [disabled]="true" />
+          <input type="checkbox" [disabled]="true" />
+          <input type="checkbox" [checked]="element.ischecked" (change)="tagFilterSelected(element)" [style.margin-right]="'50px'" />
+        </ng-container>
+        <ng-container *ngIf="element.type==='node'">
+          <input type="checkbox" [checked]="element.isCheckedX" [disabled]="!(element.children) || !(element.children.length>0)" (change)="dimXSelected(element)" />
+          <input type="checkbox" [checked]="element.isCheckedY" [disabled]="!(element.children) || !(element.children.length>0)" (change)="dimYSelected(element)" />
+          <input type="checkbox" [checked]="element.isCheckedFilters" (change)="nodeFilterSelected(element)" [style.margin-right]="'50px'" />
+        </ng-container>
+        {{element.name}}
+      </div>
+    </div>
+
+</div>
